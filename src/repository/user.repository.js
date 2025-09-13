@@ -20,6 +20,17 @@ export default class UserRepository {
         });
     }
 
+    async update(email, data) {
+        return await prisma.user.update({ where: { email }, data });
+    }
+
+    async updateAccessToken(id, token) {
+    return await prisma.user.update({
+        where: { id },
+        data: { access_token: token }
+    });
+    }
+
     async updatePassword(id, password) {
         return await prisma.user.update({
             where: { id },

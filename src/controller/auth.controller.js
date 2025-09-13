@@ -50,4 +50,18 @@ export default class AuthController {
             res.status(500).json({ error: "internal server error" });
         }
     }
+
+    loginGoogle = async (req, res) => {
+        try {
+            const {id, email} = req.user;
+            const token = await this.authService.loginGoogle(id, email);
+            res.status(200).json({
+                user: {id, email},
+                token
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "internal server error" });   
+        }
+    }
 }

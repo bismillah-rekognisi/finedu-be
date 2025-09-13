@@ -84,6 +84,36 @@ export default class AuthService {
         }
         
         const token = signJwt({ userId: user.id, email: user.email });
+        await this.userRepo.updateAccessToken(user.id, token);
         return { user, token };
+    }
+    
+    async findOrCreateGoogleUser({ email, name, picture, accessToken }) {
+        console.info({ email, name, picture, accessToken });
+        let user = await this.userRepo.findByEmail(email);
+
+        if (!user) {
+            user = await this.userRepo.create({
+                email,
+                name,
+                avatar: picture,
+                provider: "google",
+                password: "",
+                access_token: accessToken,
+            });
+        } else {
+            user = await this.userRepo.update(email, {
+                provider: "google",
+                avatar: picture || user.avatar,
+                access_token: accessToken,
+            });
+        }
+
+        return user;
+    }
+
+    async loginGoogle(userId, email) {
+        const token = signJwt({ userId, email });
+        return token;
     }
 }
