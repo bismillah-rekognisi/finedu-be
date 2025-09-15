@@ -6,7 +6,7 @@ export default class AuthController {
         this.authService = authService;
     }
 
-    register = async (req, res) => {
+    register = async (req, res, next) => {
         try {
             const { error, value } = createUserSchema.validate(req.body, { abortEarly: false });
             if (error) {
@@ -15,12 +15,11 @@ export default class AuthController {
             const user = await this.authService.register(value);
             res.status(201).json(toUserResponse(user));
         } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: "internal server error" });
+            next(error);
         }
     }
 
-    verify = async (req, res) => {
+    verify = async (req, res, next) => {
         try {
             const { token } = req.query;
             if (!token) {
@@ -29,12 +28,11 @@ export default class AuthController {
             const user = await this.authService.verify(token);
             res.status(200).json(toUserResponse(user));
         } catch (error) {
-            console.error(error);
-            res.status(400).json({ error: "internal server error" });
+            next(error);
         }
     }
 
-    login = async (req, res) => {
+    login = async (req, res, next) => {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
@@ -46,12 +44,11 @@ export default class AuthController {
                 token
             });
         } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "internal server error" });
+            next(error);
         }
     }
 
-    loginGoogle = async (req, res) => {
+    loginGoogle = async (req, res, next) => {
         try {
             const {id, email} = req.user;
             const token = await this.authService.loginGoogle(id, email);
@@ -60,8 +57,19 @@ export default class AuthController {
                 token
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "internal server error" });   
+            next(error);
+        }
+    }
+
+    getProfile = async (req, res, next) => {
+        try {
+            const user = await this.authService.profile(req.user.id);
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.status(200).json(toUserResponse(user));
+        } catch (error) {
+            next(error); 
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import passport from '../config/passport.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 export default function createAuthRoute(authController) {
     const router = Router();
@@ -9,6 +10,7 @@ export default function createAuthRoute(authController) {
     router.post('/login', authController.login);
     router.get('/google', passport.authenticate("google", {scope: ["profile", "email"]}));
     router.get('/google/callback', passport.authenticate("google", {session: false, failureRedirect: "/login"}), authController.loginGoogle);
+    router.get('/me', authMiddleware, authController.getProfile);
 
     return router;
 }

@@ -2,6 +2,7 @@ import { sendEmail } from "../utils/mail.js";
 import { generateLinkVerification, decrypt } from "../utils/verification.js";
 import { signJwt } from "../utils/jwt.js";
 import bcrypt from "bcryptjs";
+import { AppError, EmailNotVerifiedError, InvalidCredentialsError, UnauthorizedError } from "../error/appError.js";
 
 export default class AuthService {
     constructor(userRepo) {
@@ -11,7 +12,7 @@ export default class AuthService {
     async register(userData) {
         const existingUser = await this.userRepo.findByEmail(userData.email);
         if (existingUser) {
-            throw new Error('User already exists');
+            throw new AppError('User already exists', 400);
         }
         userData.password = await bcrypt.hash(userData.password, 10);
         const newUser = await this.userRepo.create(userData);
@@ -47,23 +48,23 @@ export default class AuthService {
         try {
             payload = decrypt(token);
         } catch (err) {
-            throw new Error("Invalid or expired verification token");
+            throw new UnauthorizedError("Invalid or expired verification token");
         }
 
         if (!payload || !payload.userId || !payload.email) {
-            throw new Error("Invalid verification token payload");
+            throw new UnauthorizedError("Invalid verification token payload");
         }
 
         const { userId, email } = payload;
         const user = await this.userRepo.findById(userId);
         if (!user) {
-            throw new Error("User not found");
+            throw new AppError('User not found', 404);
         }
         if (user.email !== email) {
-            throw new Error("Email mismatch");
+            throw new AppError("Email mismatch", 400);
         }
         if (user.isVerified) {
-            throw new Error("User already verified");
+            throw new AppError("User already verified", 400);
         }
 
         const updatedUser = await this.userRepo.verify(userId);
@@ -73,14 +74,14 @@ export default class AuthService {
     async login({ email, password }) {
         const user = await this.userRepo.findByEmail(email);
         if (!user) {
-            throw new Error('User not found');
+            throw new AppError('User not found', 404);
         }
         if (user.emailVerifiedAt === null) {
-            throw new Error('Email not verified');
+            throw new EmailNotVerifiedError();
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            throw new Error('Invalid credentials');
+            throw new InvalidCredentialsError('Invalid credentials');
         }
         
         const token = signJwt({ userId: user.id, email: user.email });
@@ -89,7 +90,6 @@ export default class AuthService {
     }
     
     async findOrCreateGoogleUser({ email, name, picture, accessToken }) {
-        console.info({ email, name, picture, accessToken });
         let user = await this.userRepo.findByEmail(email);
 
         if (!user) {
@@ -115,5 +115,13 @@ export default class AuthService {
     async loginGoogle(userId, email) {
         const token = signJwt({ userId, email });
         return token;
+    }
+
+    async profile(id) {
+        const user = await this.userRepo.findById(id);
+        if (!user) {
+            throw new AppError('User not found', 404);
+        }
+        return user;
     }
 }
