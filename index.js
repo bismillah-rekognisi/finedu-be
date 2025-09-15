@@ -1,9 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
-import AuthController from "./controller/auth.controller.js";
-import UserRepository from "./repository/user.repository.js";
-import AuthService from "./service/auth.service.js";
-import createAuthRoute from "./routes/auth.route.js";
+import AuthController from "./src/controller/auth.controller.js";
+import UserRepository from "./src/repository/user.repository.js";
+import AuthService from "./src/service/auth.service.js";
+import createAuthRoute from "./src/routes/auth.route.js";
 
 dotenv.config();
 
