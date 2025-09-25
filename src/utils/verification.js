@@ -27,10 +27,12 @@ export function decrypt(token) {
   }
 }
 
-export function generateLinkVerification({ baseUrl, userId, email }) {
+export function generateLinkVerification({ baseUrl, userId, name, email, role }) {
     const payload = {
         userId,
+        name,
         email,
+        role,
         timestamp: Date.now()
     };
     const token = encrypt(payload);

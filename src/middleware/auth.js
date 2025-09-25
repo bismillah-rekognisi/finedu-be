@@ -14,7 +14,9 @@ export function authMiddleware(req, res, next) {
         }
         req.user = {
             id: payload.userId,
-            email: payload.email
+            name: payload.name,
+            email: payload.email,
+            role: payload.role,
         };
         next();
     } catch (err) {

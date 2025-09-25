@@ -4,9 +4,10 @@ export function toUserResponse(user) {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        role: user.role,
+        roleId: user.roleId ?? null,
+        role: user.role ?? null,
         provider: user.provider,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-    }
+    };
 }

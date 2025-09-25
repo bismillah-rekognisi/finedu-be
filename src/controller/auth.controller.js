@@ -6,6 +6,18 @@ export default class AuthController {
         this.authService = authService;
     }
 
+    getProfile = async (req, res, next) => {
+        try {
+            const user = await this.authService.profile(req.user.id);
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.status(200).json(toUserResponse(user));
+        } catch (error) {
+            next(error); 
+        }
+    }
+
     register = async (req, res, next) => {
         try {
             const { error, value } = createUserSchema.validate(req.body, { abortEarly: false });
@@ -58,18 +70,6 @@ export default class AuthController {
             });
         } catch (error) {
             next(error);
-        }
-    }
-
-    getProfile = async (req, res, next) => {
-        try {
-            const user = await this.authService.profile(req.user.id);
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
-            res.status(200).json(toUserResponse(user));
-        } catch (error) {
-            next(error); 
         }
     }
 }

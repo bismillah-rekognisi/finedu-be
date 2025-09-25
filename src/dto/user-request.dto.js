@@ -5,7 +5,7 @@ export const createUserSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     avatar: Joi.string().allow(null, "").optional(),
-    role: Joi.string().valid("user", "admin").default("user"),
+    roleId: Joi.number().integer().valid(1, 2, 3).default(2), // 1: admin, 2: owner, 3: staff
     provider: Joi.string().default("local"),
 });
 
@@ -14,6 +14,6 @@ export const updateUserSchema = Joi.object({
     email: Joi.string().email(),
     password: Joi.string().min(6),
     avatar: Joi.string().allow(null, ""),
-    role: Joi.string().valid("user", "admin"),
+    roleId: Joi.number().integer().valid(1, 2, 3), // 1: admin, 2: owner, 3: staff
     provider: Joi.string()
 });

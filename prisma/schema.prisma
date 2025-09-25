@@ -7,18 +7,151 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// == ENUMS
+enum BlogStatus {
+  draft
+  published
+  archived
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+// == MODELS
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  users User[]
+
+  @@map("roles")
+}
+
 model User {
   id              Int       @id @default(autoincrement())
   name            String
   email           String    @unique
   password        String
   avatar          String?
-  role            String    @default("user")
+  roleId          Int
   provider        String    @default("local")
   access_token    String?
   emailVerifiedAt DateTime?
+
+  role            Role      @relation(fields: [roleId], references: [id])
+  businesses      Business[]
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   @@map("users")
+}
+
+model Business {
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  name            String
+  categoryId      Int?
+  address         String?
+  description     String?
+
+  user            User             @relation(fields: [userId], references: [id])
+  category        BusinessCategory? @relation(fields: [categoryId], references: [id])
+  transactions    Transaction[]
+  goals           Goal[]
+  recommendations Recommendation[]
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("businesses")
+}
+
+model BusinessCategory {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  slug String @unique
+
+  businesses Business[]
+
+  @@map("business_categories")
+}
+
+model Transaction {
+  id                  Int                  @id @default(autoincrement())
+  businessId          Int
+  date                DateTime             @default(now())
+  type                TransactionType
+  categoryId          Int?
+  amount              Float
+  notes               String?
+
+  business            Business             @relation(fields: [businessId], references: [id])
+  category            TransactionCategory? @relation(fields: [categoryId], references: [id])
+
+  @@map("transactions")
+}
+
+model TransactionCategory {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  slug        String        @unique
+
+  transactions Transaction[]
+
+  @@map("transaction_categories")
+}
+
+model Goal {
+  id            Int      @id @default(autoincrement())
+  businessId    Int
+  title         String
+  targetAmount  Float
+  progressAmount Float   @default(0)
+  deadline      DateTime
+  status        String   @default("Not Yet") // Not Yet | On Going | Done
+
+  business      Business @relation(fields: [businessId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("goals")
+}
+
+model Recommendation {
+  id          Int      @id @default(autoincrement())
+  businessId  Int
+  type        String   // "AI Prediction" | "Growth Tip" | "Warning"
+  message     String
+  date        DateTime @default(now())
+
+  business    Business @relation(fields: [businessId], references: [id])
+
+  @@map("recommendations")
+}
+
+model BlogCategory {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+
+  blogs Blog[]
+
+  @@map("blog_categories")
+}
+
+model Blog {
+  id            Int      @id @default(autoincrement())
+  title         String
+  content       String
+  categoryId    Int?
+  publishedAt   DateTime @default(now())
+  status        BlogStatus @default(draft)
+
+  category      BlogCategory? @relation(fields: [categoryId], references: [id])
+
+  @@map("blogs")
 }

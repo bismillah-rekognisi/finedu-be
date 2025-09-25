@@ -9,6 +9,14 @@ export default class AuthService {
         this.userRepo = userRepo;
     }
 
+    async profile(id) {
+        const user = await this.userRepo.findById(id);
+        if (!user) {
+            throw new AppError('User not found', 404);
+        }
+        return user;
+    }
+
     async register(userData) {
         const existingUser = await this.userRepo.findByEmail(userData.email);
         if (existingUser) {
@@ -84,7 +92,12 @@ export default class AuthService {
             throw new InvalidCredentialsError('Invalid credentials');
         }
         
-        const token = signJwt({ userId: user.id, email: user.email });
+        const token = signJwt({ 
+            userId: user.id, 
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        });
         await this.userRepo.updateAccessToken(user.id, token);
         return { user, token };
     }
@@ -115,13 +128,5 @@ export default class AuthService {
     async loginGoogle(userId, email) {
         const token = signJwt({ userId, email });
         return token;
-    }
-
-    async profile(id) {
-        const user = await this.userRepo.findById(id);
-        if (!user) {
-            throw new AppError('User not found', 404);
-        }
-        return user;
     }
 }

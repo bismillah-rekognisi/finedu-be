@@ -6,11 +6,11 @@ export default class UserRepository {
     }
 
     async findById(id) {
-        return await prisma.user.findUnique({ where: { id } });
+        return await prisma.user.findUnique({ where: { id }, include: { role: true } });
     }
 
     async findByEmail(email) {
-        return await prisma.user.findUnique({ where: { email } });
+        return await prisma.user.findUnique({ where: { email }, include: { role: true } });
     }
 
     async verify(id) {
@@ -25,10 +25,10 @@ export default class UserRepository {
     }
 
     async updateAccessToken(id, token) {
-    return await prisma.user.update({
-        where: { id },
-        data: { access_token: token }
-    });
+        return await prisma.user.update({
+            where: { id },
+            data: { access_token: token }
+        });
     }
 
     async updatePassword(id, password) {
