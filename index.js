@@ -30,6 +30,14 @@ import RoleController from "./src/controller/role.controller.js";
 import BusinessCategoryController from "./src/controller/business-category.controller.js";
 import BusinessController from "./src/controller/business.controller.js";
 import GoalController from "./src/controller/goal.controller.js";
+import BlogService from "./src/service/blog.service.js";
+import BlogController from "./src/controller/blog.controller.js";
+import BlogRepository from "./src/repository/blog.repository.js";
+import createBlogRoute from "./src/routes/blog.route.js";
+import BlogCategoryRepository from "./src/repository/blog-category.repository.js";
+import BlogCategoryService from "./src/service/blog-category.service.js";
+import BlogCategoryController from "./src/controller/blog-category.controller.js";
+import createBlogCategoryRoute from "./src/routes/blog-category.route.js";
 
 dotenv.config();
 
@@ -50,6 +58,8 @@ const businessRepo = new BusinessRepository();
 const goalRepo = new GoalRepository();
 const transactionCategoryRepo = new TransactionCategoryRepository();
 const transactionRepo = new TransactionRepository();
+const blogRepo = new BlogRepository();
+const blogCategoryRepo = new BlogCategoryRepository();
 
 // Service Init
 const authService = new AuthService(userRepo);
@@ -59,6 +69,8 @@ const businessService = new BusinessService(businessRepo);
 const goalService = new GoalService(goalRepo);
 const transactionCategoryService = new TransactionCategoryService(transactionCategoryRepo);
 const transactionService = new TransactionService(transactionRepo, businessService);
+const blogService = new BlogService(blogRepo);
+const blogCategoryService = new BlogCategoryService(blogCategoryRepo);
 
 // Controller Init
 const authController = new AuthController(authService);
@@ -68,6 +80,8 @@ const businessController = new BusinessController(businessService);
 const goalController = new GoalController(goalService);
 const transactionCategoryController = new TransactionCategoryController(transactionCategoryService);
 const transactionController = new TransactionController(transactionService);
+const blogController = new BlogController(blogService);
+const blogCategoryController = new BlogCategoryController(blogCategoryService);
 
 // Router Init
 const authRouter = createAuthRoute(authController);
@@ -77,6 +91,8 @@ const businessRouter = createBusinessRoute(businessController);
 const goalRouter = createGoalRoute(goalController);
 const transactionCategoryRouter = createTransactionCategoryRoute(transactionCategoryController);
 const transactionRouter = createTransactionRoute(transactionController);
+const blogRouter = createBlogRoute(blogController);
+const blogCategoryRouter = createBlogCategoryRoute(blogCategoryController);
 
 app.use("/auth", authRouter);
 app.use("/roles", roleRouter);
@@ -85,6 +101,8 @@ app.use("/businesses", businessRouter);
 app.use("/goals", goalRouter);
 app.use("/transaction-categories", transactionCategoryRouter);
 app.use("/transactions", transactionRouter);
+app.use("/blogs", blogRouter);
+app.use("/blog-categories", blogCategoryRouter);
 
 app.use(errorHandler);
 
