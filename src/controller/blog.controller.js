@@ -12,7 +12,8 @@ export default class BlogController {
             if (error) {
                 return res.status(400).json({ error: error.details.map(d => d.message) });
             }
-            const blog = await this.blogService.createBlog(value);
+            
+            const blog = await this.blogService.createBlog(value, req.files?.thumbnail);
             res.status(201).json(toBlogResponse(blog));
         } catch (error) {
             next(error);
@@ -45,7 +46,7 @@ export default class BlogController {
             if (error) {
                 return res.status(400).json({ error: error.details.map(d => d.message) });
             }
-            const blog = await this.blogService.updateBlog(parseInt(id), value);
+            const blog = await this.blogService.updateBlog(parseInt(id), value, req.files?.thumbnail);
             res.status(200).json(toBlogResponse(blog));
         } catch (error) {
             next(error);

@@ -41,6 +41,7 @@ import createBlogCategoryRoute from "./src/routes/blog-category.route.js";
 import UserService from "./src/service/user.service.js";
 import UserController from "./src/controller/user.controller.js";
 import createUserRoute from "./src/routes/user.route.js";
+import fileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -48,6 +49,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+)
 
 app.get("/", (req, res) => {
   res.send("Hello, world!");

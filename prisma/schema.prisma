@@ -146,6 +146,7 @@ model BlogCategory {
 
 model Blog {
   id            Int      @id @default(autoincrement())
+  thumbnail     String?
   title         String
   content       String
   categoryId    Int?

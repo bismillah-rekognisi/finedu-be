@@ -6,6 +6,7 @@ export const toBlogResponse = (blog) => {
         id: blog.id,
         title: blog.title,
         content: blog.content,
+        thumbnail: blog.thumbnail,
         categoryId: blog.categoryId,
         category: blog.category,
         status: blog.status,
