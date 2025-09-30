@@ -9,8 +9,8 @@ export default class BusinessService {
         return await this.businessRepository.create(businessData);
     }
 
-    async getAllBusinesses() {
-        return await this.businessRepository.findAll();
+    async getAllBusinesses({ month, year }) {
+        return await this.businessRepository.findAll({ month, year });
     }
     
     async getBusinessesByUserId(userId) {

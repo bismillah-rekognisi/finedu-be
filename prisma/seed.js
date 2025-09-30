@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,26 @@ async function main() {
         });
     }
     console.log('Role seeded.');
+
+    // Seed Admin User
+    const adminEmail = 'admin@finedu.com';
+    const adminPassword = await bcrypt.hash('admin123', 10);
+
+    // Get admin role id
+    const adminRole = await prisma.role.findUnique({ where: { slug: 'admin' } });
+
+    await prisma.user.upsert({
+        where: { email: adminEmail },
+        update: {},
+        create: {
+            name: 'Admin',
+            email: adminEmail,
+            password: adminPassword,
+            roleId: adminRole.id,
+            emailVerifiedAt: new Date(),
+        },
+    });
+    console.log('Admin user seeded.');
 
     // Seed Business Categories
     const businessCategories = [

@@ -5,8 +5,20 @@ export default class BusinessRepository {
         return await prisma.business.create({ data });
     }
 
-    async findAll() {
-        return await prisma.business.findMany({ include: { category: true } });
+    async findAll({ month, year }) {
+        return await prisma.business.findMany({
+            where: {
+                AND: [
+                    {
+                        createdAt: {
+                            gte: new Date(year, month - 1, 1),
+                            lt: new Date(year, month, 1)
+                        }
+                    }
+                ]
+            },
+            include: { category: true }
+        });
     }
     
     async findByUserId(userId) {

@@ -19,10 +19,23 @@ export default class BusinessController {
         }
     }
 
+    /**
+     * - Admin only
+     * - lihat statistik jumlah bisnis terdaftar (angka & grafik batang perbulan) 
+     * - default: current month and year
+     */
     getAll = async (req, res, next) => {
         try {
-            const businesses = await this.businessService.getAllBusinesses();
-            res.status(200).json(toBusinessListResponse(businesses));
+            const now = new Date();
+            const month = req.query.month ? parseInt(req.query.month) : now.getMonth() + 1;
+            const year = req.query.year ? parseInt(req.query.year) : now.getFullYear();
+            
+            const businesses = await this.businessService.getAllBusinesses({ month, year });
+            res.status(200).json({
+                message: `Get all businesses on ${month}/${year}`,
+                total_data: businesses.length,
+                data: toBusinessListResponse(businesses)
+            });
         } catch (error) {
             next(error);
         }
