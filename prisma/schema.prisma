@@ -40,6 +40,7 @@ model User {
   provider        String    @default("local")
   access_token    String?
   emailVerifiedAt DateTime?
+  isActive        Boolean
 
   role            Role      @relation(fields: [roleId], references: [id])
   businesses      Business[]

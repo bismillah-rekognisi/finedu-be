@@ -38,6 +38,9 @@ import BlogCategoryRepository from "./src/repository/blog-category.repository.js
 import BlogCategoryService from "./src/service/blog-category.service.js";
 import BlogCategoryController from "./src/controller/blog-category.controller.js";
 import createBlogCategoryRoute from "./src/routes/blog-category.route.js";
+import UserService from "./src/service/user.service.js";
+import UserController from "./src/controller/user.controller.js";
+import createUserRoute from "./src/routes/user.route.js";
 
 dotenv.config();
 
@@ -63,6 +66,7 @@ const blogCategoryRepo = new BlogCategoryRepository();
 
 // Service Init
 const authService = new AuthService(userRepo);
+const userService = new UserService(userRepo);
 const roleService = new RoleService(roleRepo);
 const businessCategoryService = new BusinessCategoryService(businessCategoryRepo);
 const businessService = new BusinessService(businessRepo);
@@ -74,6 +78,7 @@ const blogCategoryService = new BlogCategoryService(blogCategoryRepo);
 
 // Controller Init
 const authController = new AuthController(authService);
+const userController = new UserController(userService);
 const roleController = new RoleController(roleService);
 const businessCategoryController = new BusinessCategoryController(businessCategoryService);
 const businessController = new BusinessController(businessService);
@@ -85,6 +90,7 @@ const blogCategoryController = new BlogCategoryController(blogCategoryService);
 
 // Router Init
 const authRouter = createAuthRoute(authController);
+const userRouter = createUserRoute(userController);
 const roleRouter = createRoleRoute(roleController);
 const businessCategoryRouter = createBusinessCategoryRoute(businessCategoryController);
 const businessRouter = createBusinessRoute(businessController);
@@ -95,6 +101,7 @@ const blogRouter = createBlogRoute(blogController);
 const blogCategoryRouter = createBlogCategoryRoute(blogCategoryController);
 
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 app.use("/roles", roleRouter);
 app.use("/business-categories", businessCategoryRouter);
 app.use("/businesses", businessRouter);

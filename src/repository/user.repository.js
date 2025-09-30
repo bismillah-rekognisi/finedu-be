@@ -5,6 +5,10 @@ export default class UserRepository {
         return await prisma.user.create({ data });
     }
 
+    async findAll() {
+        return await prisma.user.findMany({ include: { role: true } });
+    }
+
     async findById(id) {
         return await prisma.user.findUnique({ where: { id }, include: { role: true } });
     }
@@ -24,6 +28,12 @@ export default class UserRepository {
         return await prisma.user.update({ where: { email }, data });
     }
 
+    async delete(id) {
+        return await prisma.user.delete({
+            where: { id }
+        });
+    }
+
     async updateAccessToken(id, token) {
         return await prisma.user.update({
             where: { id },
@@ -35,6 +45,20 @@ export default class UserRepository {
         return await prisma.user.update({
             where: { id },
             data: { password }
+        });
+    }
+
+    async suspend(id) {
+        return await prisma.user.update({
+            where: { id },
+            data: { isActive: false }
+        });
+    }
+
+    async activate(id) {
+        return await prisma.user.update({
+            where: { id },
+            data: { isActive: true }
         });
     }
 }

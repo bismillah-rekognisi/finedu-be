@@ -26,8 +26,13 @@ async function main() {
     const adminEmail = 'admin@finedu.com';
     const adminPassword = await bcrypt.hash('admin123', 10);
 
-    // Get admin role id
+    // Seed Owner User
+    const ownerEmail = 'owner@finedu.com';
+    const ownerPassword = await bcrypt.hash('owner123', 10);
+
+    // Get admin and owner role id
     const adminRole = await prisma.role.findUnique({ where: { slug: 'admin' } });
+    const ownerRole = await prisma.role.findUnique({ where: { slug: 'owner' } });
 
     await prisma.user.upsert({
         where: { email: adminEmail },
@@ -37,10 +42,25 @@ async function main() {
             email: adminEmail,
             password: adminPassword,
             roleId: adminRole.id,
+            isActive: true,
             emailVerifiedAt: new Date(),
         },
     });
-    console.log('Admin user seeded.');
+
+    await prisma.user.upsert({
+        where: { email: ownerEmail },
+        update: {},
+        create: {
+            name: 'Owner',
+            email: ownerEmail,
+            password: ownerPassword,
+            roleId: ownerRole.id,
+            isActive: true,
+            emailVerifiedAt: new Date(),
+        },
+    });
+
+    console.log('Admin and Owner users seeded.');
 
     // Seed Business Categories
     const businessCategories = [
