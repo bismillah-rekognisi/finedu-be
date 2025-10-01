@@ -13,13 +13,14 @@ export default class BusinessService {
         return await this.businessRepository.findAll({ month, year });
     }
 
-    async getBusinessSummary(id) {
-        const business = await this.businessRepository.findById(id);
+    async getBusinessSummary({ id, month, year }) {
+        console.info('[BusinessService] getBusinessSummary');
+        const business = await this.businessRepository.summary({ id, month, year });
         if (!business) {
             throw new AppError('Business not found', 404);
         }
 
-        // Hitung income dan expense dari transactions
+        // calculate income & expense
         let income = 0;
         let expense = 0;
         if (business.transactions && Array.isArray(business.transactions)) {
@@ -31,8 +32,7 @@ export default class BusinessService {
                 }
             }
         }
-
-        // Tambahkan profit ke business
+        
         business.income = income;
         business.expense = expense;
         business.profit = income - expense;

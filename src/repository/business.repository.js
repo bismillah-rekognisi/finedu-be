@@ -35,6 +35,46 @@ export default class BusinessRepository {
         });
     }
 
+    async summary({ id, month, year }) {
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1);
+
+        const business = await prisma.business.findUnique({
+            where: { id },
+            include: { 
+                category: true,
+                transactions: {
+                    where: {
+                        date: {
+                            gte: startDate,
+                            lt: endDate
+                        }
+                    }
+                },
+            },
+        });
+
+        if (!business) return null;
+
+        // Group by day and type
+        const dailySummary = {};
+
+        for (const t of business.transactions) {
+            const day = t.date.getDate();
+            if (!dailySummary[day]) {
+                dailySummary[day] = { income: 0, expense: 0 };
+            }
+            if (t.type === 'INCOME') {
+                dailySummary[day].income += t.amount;
+            } else if (t.type === 'EXPENSE') {
+                dailySummary[day].expense += t.amount;
+            }
+        }
+
+        business.dailySummary = dailySummary;
+        return business;
+    }
+
     async update(id, data) {
         return await prisma.business.update({ where: { id }, data });
     }

@@ -59,7 +59,18 @@ export default class BusinessController {
     getSummary = async (req, res, next) => {
         try {
             const { id } = req.params;
-            const summary = await this.businessService.getBusinessSummary(parseInt(id));
+            
+            // get month & year
+            const now = new Date();
+            const month = req.query.month ? parseInt(req.query.month) : now.getMonth() + 1;
+            const year = req.query.year ? parseInt(req.query.year) : now.getFullYear();
+
+            const data = {
+                id: parseInt(id),
+                month,
+                year,
+            };
+            const summary = await this.businessService.getBusinessSummary(data);
             res.status(200).json(toBusinessSummary(summary));
         } catch (error) {
 

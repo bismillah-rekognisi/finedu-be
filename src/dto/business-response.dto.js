@@ -27,6 +27,7 @@ export const toBusinessSummary = (business) => {
                 ? business.transactions.filter(t => t.type === 'INCOME')
                 : []
         },
+        daily_summary: business.dailySummary,
         total_income: business.income,
         total_expense: business.expense,
         profit: business.profit,
