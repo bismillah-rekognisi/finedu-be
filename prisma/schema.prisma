@@ -64,6 +64,7 @@ model Business {
   transactions    Transaction[]
   goals           Goal[]
   recommendations Recommendation[]
+  targets         Target[]
 
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -156,4 +157,25 @@ model Blog {
   category      BlogCategory? @relation(fields: [categoryId], references: [id])
 
   @@map("blogs")
+}
+
+enum TargetStatusType {
+  Going
+  Achieved
+}
+
+model Target {
+  id             Int              @id @default(autoincrement())
+  businessId     Int
+  title          String
+  amount         Float            // target profit amount
+  achievedAmount Float            @default(0) // current profit
+  deadlineDate   DateTime
+  status         TargetStatusType @default(Going)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  business       Business         @relation(fields: [businessId], references: [id])
+
+  @@map("targets")
 }

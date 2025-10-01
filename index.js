@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import fileUpload from "express-fileupload";
+import errorHandler from "./src/middleware/errorHandler.js";
 import AuthController from "./src/controller/auth.controller.js";
 import UserRepository from "./src/repository/user.repository.js";
 import AuthService from "./src/service/auth.service.js";
@@ -11,25 +13,28 @@ import createBusinessRoute from "./src/routes/business.route.js";
 import createGoalRoute from "./src/routes/goal.route.js";
 import createTransactionCategoryRoute from "./src/routes/transaction-category.route.js";
 import createTransactionRoute from "./src/routes/transaction.route.js";
-import errorHandler from "./src/middleware/errorHandler.js";
+import createTargetRoute from "./src/routes/target.route.js";
 import RoleRepository from "./src/repository/role.repository.js";
 import BusinessCategoryRepository from "./src/repository/business-category.repository.js";
 import BusinessRepository from "./src/repository/business.repository.js";
 import GoalRepository from "./src/repository/goal.repository.js";
 import TransactionCategoryRepository from "./src/repository/transaction-category.repository.js";
 import TransactionRepository from "./src/repository/transaction.repository.js";
+import TargetRepository from "./src/repository/target.repository.js";
 import RoleService from "./src/service/role.service.js";
 import BusinessCategoryService from "./src/service/business-category.service.js";
 import BusinessService from "./src/service/business.service.js";
 import GoalService from "./src/service/goal.service.js";
 import TransactionCategoryService from "./src/service/transaction-category.service.js";
 import TransactionService from "./src/service/transaction.service.js";
+import TargetService from "./src/service/target.service.js";
 import TransactionCategoryController from "./src/controller/transaction-category.controller.js";
 import TransactionController from "./src/controller/transaction.controller.js";
 import RoleController from "./src/controller/role.controller.js";
 import BusinessCategoryController from "./src/controller/business-category.controller.js";
 import BusinessController from "./src/controller/business.controller.js";
 import GoalController from "./src/controller/goal.controller.js";
+import TargetController from "./src/controller/target.controller.js";
 import BlogService from "./src/service/blog.service.js";
 import BlogController from "./src/controller/blog.controller.js";
 import BlogRepository from "./src/repository/blog.repository.js";
@@ -41,7 +46,6 @@ import createBlogCategoryRoute from "./src/routes/blog-category.route.js";
 import UserService from "./src/service/user.service.js";
 import UserController from "./src/controller/user.controller.js";
 import createUserRoute from "./src/routes/user.route.js";
-import fileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -70,6 +74,7 @@ const transactionCategoryRepo = new TransactionCategoryRepository();
 const transactionRepo = new TransactionRepository();
 const blogRepo = new BlogRepository();
 const blogCategoryRepo = new BlogCategoryRepository();
+const targetRepo = new TargetRepository();
 
 // Service Init
 const authService = new AuthService(userRepo);
@@ -82,6 +87,7 @@ const transactionCategoryService = new TransactionCategoryService(transactionCat
 const transactionService = new TransactionService(transactionRepo, businessService);
 const blogService = new BlogService(blogRepo);
 const blogCategoryService = new BlogCategoryService(blogCategoryRepo);
+const targetService = new TargetService(targetRepo);
 
 // Controller Init
 const authController = new AuthController(authService);
@@ -94,6 +100,7 @@ const transactionCategoryController = new TransactionCategoryController(transact
 const transactionController = new TransactionController(transactionService);
 const blogController = new BlogController(blogService);
 const blogCategoryController = new BlogCategoryController(blogCategoryService);
+const targetController = new TargetController(targetService);
 
 // Router Init
 const authRouter = createAuthRoute(authController);
@@ -106,6 +113,7 @@ const transactionCategoryRouter = createTransactionCategoryRoute(transactionCate
 const transactionRouter = createTransactionRoute(transactionController);
 const blogRouter = createBlogRoute(blogController);
 const blogCategoryRouter = createBlogCategoryRoute(blogCategoryController);
+const targetRouter = createTargetRoute(targetController);
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
@@ -117,6 +125,7 @@ app.use("/transaction-categories", transactionCategoryRouter);
 app.use("/transactions", transactionRouter);
 app.use("/blogs", blogRouter);
 app.use("/blog-categories", blogCategoryRouter);
+app.use("/targets", targetRouter);
 
 app.use(errorHandler);
 
