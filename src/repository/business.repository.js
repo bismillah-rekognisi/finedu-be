@@ -26,7 +26,13 @@ export default class BusinessRepository {
     }
 
     async findById(id) {
-        return await prisma.business.findUnique({ where: { id }, include: { category: true } });
+        return await prisma.business.findUnique({ 
+            where: { id }, 
+            include: { 
+                category: true,
+                transactions: true,
+            }, 
+        });
     }
 
     async update(id, data) {

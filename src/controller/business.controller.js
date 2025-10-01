@@ -1,5 +1,5 @@
 import { createBusinessSchema, updateBusinessSchema } from "../dto/business-request.dto.js";
-import { toBusinessResponse, toBusinessListResponse } from "../dto/business-response.dto.js";
+import { toBusinessResponse, toBusinessListResponse, toBusinessSummary } from "../dto/business-response.dto.js";
 
 export default class BusinessController {
     constructor(businessService) {
@@ -19,11 +19,6 @@ export default class BusinessController {
         }
     }
 
-    /**
-     * - Admin only
-     * - lihat statistik jumlah bisnis terdaftar (angka & grafik batang perbulan) 
-     * - default: current month and year
-     */
     getAll = async (req, res, next) => {
         try {
             const now = new Date();
@@ -58,6 +53,16 @@ export default class BusinessController {
             res.status(200).json(toBusinessResponse(business));
         } catch (error) {
             next(error);
+        }
+    }
+
+    getSummary = async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const summary = await this.businessService.getBusinessSummary(parseInt(id));
+            res.status(200).json(toBusinessSummary(summary));
+        } catch (error) {
+
         }
     }
 

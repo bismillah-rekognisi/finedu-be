@@ -15,7 +15,7 @@ export const ensureOwner = (entity, field = 'userId') => {
                 throw new AppError(`${entity} not found`, 404);
             }
 
-            if (user.roleId !== 1 && record[field] !== user.id) {
+            if (user.role.id !== 1 && record[field] !== user.id) {
                 throw new AppError('Forbidden: you are not the owner', 403);
             }
 

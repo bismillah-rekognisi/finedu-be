@@ -14,3 +14,21 @@ export const toBusinessResponse = (business) => {
 export const toBusinessListResponse = (businesses) => {
     return businesses.map(business => toBusinessResponse(business));
 };
+
+export const toBusinessSummary = (business) => {
+    return {
+        id: business.id,
+        name: business.name,
+        transactions: {
+            expense: business.transactions
+                ? business.transactions.filter(t => t.type === 'EXPENSE')
+                : [],
+            income: business.transactions
+                ? business.transactions.filter(t => t.type === 'INCOME')
+                : []
+        },
+        total_income: business.income,
+        total_expense: business.expense,
+        profit: business.profit,
+    };
+};
