@@ -45,10 +45,13 @@ export default class TransactionController {
         try {
             const userId = req.user.id;
             const { businessId } = req.query;
+            const { startDate, endDate, categoryId } = req.query;
+
             if (!businessId) {
                 return res.status(400).json({ error: "businessId is required as a query parameter" });
             }
-            const transactions = await this.transactionService.getTransactionsByBusiness(Number(businessId), userId);
+
+            const transactions = await this.transactionService.getTransactionsByBusiness(Number(businessId), userId, startDate, endDate, parseInt(categoryId));
             res.status(200).json(toTransactionListResponse(transactions));
         } catch (err) {
             next(err);

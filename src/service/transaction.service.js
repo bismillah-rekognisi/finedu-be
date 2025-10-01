@@ -18,12 +18,14 @@ export default class TransactionService {
         return await this.transactionRepository.getAll();
     }
 
-    async getTransactionsByBusiness(businessId, userId) {
+    async getTransactionsByBusiness(businessId, userId, startDate, endDate, categoryId) {
+        console.debug("[TransactionService] getTransactionsByBusiness", {businessId, userId, startDate, endDate, categoryId});
+
         const business = await this.businessService.getBusinessById(businessId);
         if (!business || business.userId !== userId) {
             throw new AppError("Access denied: You are not the owner of this business.", 403);
         }
-        return await this.transactionRepository.getByBusiness(businessId);
+        return await this.transactionRepository.getByBusiness(businessId, startDate, endDate, categoryId);
     }
 
     async updateTransaction(id, data) {

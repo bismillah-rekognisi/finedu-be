@@ -14,9 +14,25 @@ export default class TransactionRepository {
         });
     }
 
-    async getByBusiness(businessId) {
+    async getByBusiness(businessId, startDate, endDate, categoryId) {
+        const where = { businessId: businessId };
+
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            where.date = {
+                gte: start,
+                lte: end,
+            };
+        }
+
+        if (categoryId) {
+            where.categoryId = categoryId;
+        }
+
         return await prisma.transaction.findMany({
-            where: { businessId: businessId },
+            where,
             include: { category: true, business: true },
             orderBy: { date: 'desc' },
         });
