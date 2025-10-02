@@ -15,7 +15,7 @@ export const toBusinessListResponse = (businesses) => {
     return businesses.map(business => toBusinessResponse(business));
 };
 
-export const toBusinessSummary = (business) => {
+export const toBusinessAnalytic = (business) => {
     return {
         id: business.id,
         name: business.name,
@@ -28,6 +28,8 @@ export const toBusinessSummary = (business) => {
                 : []
         },
         daily_summary: business.dailySummary,
+        expense_distribution: business.expenseDistribution,
+        filtered_tdransactions: business.filteredTransactions,
         total_income: business.income,
         total_expense: business.expense,
         profit: business.profit,

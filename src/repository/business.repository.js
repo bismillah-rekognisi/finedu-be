@@ -35,19 +35,19 @@ export default class BusinessRepository {
         });
     }
 
-    async summary({ id, month, year }) {
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 1);
-
+    async analytic({ id, startDate, endDate }) {
         const business = await prisma.business.findUnique({
             where: { id },
             include: { 
                 category: true,
                 transactions: {
+                    include: {
+                        category: true,
+                    },
                     where: {
                         date: {
                             gte: startDate,
-                            lt: endDate
+                            lte: endDate
                         }
                     }
                 },

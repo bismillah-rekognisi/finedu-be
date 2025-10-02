@@ -1,5 +1,5 @@
 import { createBusinessSchema, updateBusinessSchema } from "../dto/business-request.dto.js";
-import { toBusinessResponse, toBusinessListResponse, toBusinessSummary } from "../dto/business-response.dto.js";
+import { toBusinessResponse, toBusinessListResponse, toBusinessAnalytic } from "../dto/business-response.dto.js";
 
 export default class BusinessController {
     constructor(businessService) {
@@ -56,24 +56,22 @@ export default class BusinessController {
         }
     }
 
-    getSummary = async (req, res, next) => {
+    getAnalytic = async (req, res, next) => {
         try {
             const { id } = req.params;
-            
-            // get month & year
-            const now = new Date();
-            const month = req.query.month ? parseInt(req.query.month) : now.getMonth() + 1;
-            const year = req.query.year ? parseInt(req.query.year) : now.getFullYear();
+            const { filter } = req.query;
 
-            const data = {
-                id: parseInt(id),
-                month,
-                year,
+            const data = { 
+                id: parseInt(id), 
+                filter 
             };
-            const summary = await this.businessService.getBusinessSummary(data);
-            res.status(200).json(toBusinessSummary(summary));
+            const summary = await this.businessService.getBusinessAnalytic(data);
+            res.status(200).json({
+                message: `Get business analytic with filter: ${filter}`,
+                data: toBusinessAnalytic(summary)
+            });
         } catch (error) {
-
+            next(error)
         }
     }
 

@@ -12,7 +12,7 @@ export default function createBusinessRoute(businessController) {
     router.get('/', businessController.getByUser);
     router.get('/all', ensureRole('Admin'), businessController.getAll);
     router.get('/:id', ensureOwner('business'), businessController.getById);
-    router.get('/:id/summary', ensureOwner('business'), businessController.getSummary);
+    router.get('/:id/analytics', ensureOwner('business'), businessController.getAnalytic);
     router.put('/:id', ensureOwner('business'), businessController.update);
     router.delete('/:id', ensureOwner('business'), businessController.delete);
 
